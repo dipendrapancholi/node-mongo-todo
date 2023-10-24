@@ -6,16 +6,16 @@ module.exports.getAllToDos = async (req,res) => {
 };
 
 module.exports.getMyToDos = async (req,res) => {
-    const {id} = req.user;
-    const toDos = await ToDoModel.find({user:id});
+    const {userid} = req.user;
+    const toDos = await ToDoModel.find({user:userid});
     return res.status(200).send(toDos);
 };
 
 module.exports.saveToDos = (req,res) => {
 
     const {title, description} = req.body;
-    const {id} = req.user;
-    const newTodo = {title, description, user:id};
+    const {userid} = req.user;
+    const newTodo = {title, description, user:userid};
 
     ToDoModel.create(newTodo).then((data) => {
         console.log("data saved...");
@@ -26,10 +26,18 @@ module.exports.saveToDos = (req,res) => {
 };
 
 module.exports.deleteToDos = (req,res) => {
-    const { id } = req.param;
-    ToDoModel.findByIdAndDelete(id).then(() => {
-        console.log("ToDo Deleted...");
-        return res.status(201).send("Deleted...");
+    
+    const { _id } = req.param;
+    const {userid} = req.user;
+
+    ToDoModel.deleteOne({_id, user : userid}).then((result) => {
+        
+        if(result.deletedCount === 1) {
+            return res.status(201).send({msg:"Deleted.."});
+        } else {
+            return res.status(201).send({msg:"Data not found.."});
+        }
+        
     }).catch( (error) => {
         return res.status(400).send({error: error, msg : "Something went wrong...!!"});
     });

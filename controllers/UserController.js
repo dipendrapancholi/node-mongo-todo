@@ -58,7 +58,7 @@ module.exports.userLogin = async (req, res) => {
     }
     
     const userData = { 
-            id : user._id,
+            userid : user._id,
             username : user.username, 
             email : user.email,
             firstname : user.firstname,
