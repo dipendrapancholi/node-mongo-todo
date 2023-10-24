@@ -43,10 +43,11 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.userLogin = async (req, res) => {
+    
     const {username, password} = req.body;
     const user = await UserModel.findOne({"$or":[{username:username},{email:username}]});
-
-    if(!user ) {
+    
+    if(!user) {
         return res.status(401).send("Authentication failed.");
     }
 
@@ -56,8 +57,14 @@ module.exports.userLogin = async (req, res) => {
         return res.status(401).send("Authentication failed.");
     }
     
-    const token = jwt.sign({ username: user.username, userId: user._id }, process.env.SECRATE, { expiresIn: '1h' });
-    return res.status(200).send({token : token});
+    const userData = { 
+            id : user._id,
+            username : user.username, 
+            email : user.email,
+            firstname : user.firstname,
+            lastname : user.lastname
+        };
 
-    return res.status(401).send("Authentication failed.");
+    const token = jwt.sign(userData, process.env.SECRATE, { expiresIn: '1h' });
+    return res.status(200).send({token : token});
 };

@@ -1,12 +1,17 @@
 const mongoose = require("mongoose");
 
 const todoSchema = new mongoose.Schema({
-    toDo: {
+    title: {
         type : String,
         required : true
     },
-    email: {
+    description: {
         type : String,
+        required : true
+    },
+    user: {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'users',
         required : true
     }
 }, {
