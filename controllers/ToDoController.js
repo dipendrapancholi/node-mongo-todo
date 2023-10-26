@@ -28,7 +28,7 @@ module.exports.saveToDos = (req,res) => {
 module.exports.deleteToDos = (req,res) => {
     
     const { _id } = req.param;
-    const {userid} = req.user;
+    const { userid } = req.user;
 
     ToDoModel.deleteOne({_id, user : userid}).then((result) => {
         
