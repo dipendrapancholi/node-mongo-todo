@@ -25,12 +25,34 @@ module.exports.saveToDos = (req,res) => {
     });
 };
 
-module.exports.deleteToDos = (req,res) => {
-    
-    const { _id } = req.param;
+module.exports.updateToDos = async (req, res) => {
+
+    const todoId = req.params.id;
+    const updateTodo = req.body;
     const { userid } = req.user;
 
-    ToDoModel.deleteOne({_id, user : userid}).then((result) => {
+    try {
+
+        const updatedTodo = await ToDoModel.findOneAndUpdate({ _id: todoId, user: userid }, updateTodo, { new: true });
+
+        if (!updatedTodo) {
+          return res.status(404).send({ message: 'Todo not found' });
+        } else {
+            return res.status(201).send({ message: 'Todo updated successfully' });
+        }
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({error: error, msg : "Something went wrong...!!"});
+    }
+};
+
+module.exports.deleteToDos = (req,res) => {
+    
+    const todoId = req.params.id;
+    const { userid } = req.user;
+    
+    ToDoModel.deleteOne({_id: todoId, user : userid}).then((result) => {
         
         if(result.deletedCount === 1) {
             return res.status(201).send({msg:"Deleted.."});

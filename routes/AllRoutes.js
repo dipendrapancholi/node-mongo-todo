@@ -14,6 +14,7 @@ router.get( "/", (req, res) => {
 router.get( "/todos/getall", verifyToken, todoController.getAllToDos );
 router.get( "/todos/mytodos", verifyToken, todoController.getMyToDos );
 router.post( "/todos/save", verifyToken, todoController.saveToDos );
+router.put( "/todos/update/:id", verifyToken, todoController.updateToDos );
 router.delete( "/todos/delete/:id", verifyToken, todoController.deleteToDos );
 
 // User Routes
@@ -23,6 +24,6 @@ router.get( "/users/userbyusername", verifyToken, UserController.getUserByUserNa
 router.get( "/users/userbyemail", verifyToken, UserController.getUserByEmail );
 
 router.put( "/users/createuser", UserController.createUser );
-router.get( "/users/userlogin", UserController.userLogin );
+router.post( "/users/userlogin", UserController.userLogin );
 
 module.exports = router

@@ -14,6 +14,6 @@ mongoose.connect(process.env.MONGOURI)
     .then(() => console.log("Connect successfully..."))
     .catch((error) => console.log(error));
 
-app.use("/api", routes);
+app.use("/", routes);
 
 app.listen(PORT, () => console.log(`Listening to ${PORT}`));

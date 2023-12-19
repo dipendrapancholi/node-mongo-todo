@@ -10,7 +10,7 @@ module.exports.getAllUsers = async (req, res) => {
 
 module.exports.getUserByID = async (req, res) => {
     const {id} = req.body;
-    const user = await UserModel.findOne({id});
+    const user = await UserModel.findOne({ id });
     return res.status(200).send(user);
 };
 
@@ -28,14 +28,15 @@ module.exports.getUserByEmail = async (req, res) => {
 
 module.exports.createUser = (req, res) => {
     const newUser = req.body;
-    newUser.password = bcrypt.hashSync(req.body.password, 10);
-
+    
     if( newUser.password != newUser.cpassword ) {
         return res.status(400).send({"errors" : "Password and Confirm password does not match"});
     }
 
+    newUser.password = bcrypt.hashSync(req.body.password, 10);
+
     UserModel.create(newUser).then(user => {
-        return user.password = undefined;
+        user.password = undefined;
         return res.status(201).send(user);
     }).catch( err => {
         return res.status(400).send(err);
@@ -44,9 +45,10 @@ module.exports.createUser = (req, res) => {
 
 module.exports.userLogin = async (req, res) => {
     
+    const secretKey = process.env.SECRATE;
     const {username, password} = req.body;
     const user = await UserModel.findOne({"$or":[{username:username},{email:username}]});
-    
+
     if(!user) {
         return res.status(401).send("Authentication failed.");
     }
@@ -59,12 +61,12 @@ module.exports.userLogin = async (req, res) => {
     
     const userData = { 
             userid : user._id,
-            username : user.username, 
+            username : user.username,
             email : user.email,
             firstname : user.firstname,
             lastname : user.lastname
         };
-
-    const token = jwt.sign(userData, process.env.SECRATE, { expiresIn: '1h' });
+    
+    const token = jwt.sign(userData, secretKey, { expiresIn: '1h' });
     return res.status(200).send({token : token});
 };
